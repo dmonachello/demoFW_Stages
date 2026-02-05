@@ -28,10 +28,12 @@ public class RobotContainer {
     operator.y().onTrue(new SetShooterRpm(shooter, Constants.Shooter.kMidRpm));
     operator.b().onTrue(new SetShooterRpm(shooter, Constants.Shooter.kHighRpm));
     operator.x().onTrue(new StopShooter(shooter));
+    operator.rightBumper().onTrue(Commands.runOnce(shooter::shootTheBall, shooter));
 
     new JoystickButton(trellis, 1).onTrue(new SetShooterRpm(shooter, Constants.Shooter.kLowRpm));
     new JoystickButton(trellis, 2).onTrue(new SetShooterRpm(shooter, Constants.Shooter.kMidRpm));
     new JoystickButton(trellis, 3).onTrue(new SetShooterRpm(shooter, Constants.Shooter.kHighRpm));
+    new JoystickButton(trellis, 4).onTrue(Commands.runOnce(shooter::shootTheBall, shooter));
     new JoystickButton(trellis, 24).onTrue(new StopShooter(shooter));
   }
 

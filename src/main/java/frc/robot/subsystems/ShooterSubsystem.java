@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,6 +29,13 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkClosedLoopController pid = leader.getClosedLoopController();
 
   private double targetRpm = 0.0;
+  private int readyShotCount = 0;
+  private int notReadyShotCount = 0;
+  private int waitCompletedCount = 0;
+  private double waitStartTimeSec = 0.0;
+  private double lastWaitTimeSec = 0.0;
+  private double totalWaitTimeSec = 0.0;
+  private boolean waitingForReady = false;
 
   public ShooterSubsystem() {
     SparkMaxConfig baseConfig = new SparkMaxConfig();
@@ -78,11 +86,40 @@ public class ShooterSubsystem extends SubsystemBase {
     return targetRpm > 0.0 && pid.isAtSetpoint();
   }
 
+  public void shootTheBall() {
+    if (isAtTargetRpm()) {
+      readyShotCount++;
+      return;
+    }
+
+    notReadyShotCount++;
+    if (!waitingForReady) {
+      waitingForReady = true;
+      waitStartTimeSec = Timer.getFPGATimestamp();
+    }
+  }
+
   @Override
   public void periodic() {
+    if (waitingForReady && isAtTargetRpm()) {
+      waitingForReady = false;
+      lastWaitTimeSec = Timer.getFPGATimestamp() - waitStartTimeSec;
+      totalWaitTimeSec += lastWaitTimeSec;
+      waitCompletedCount++;
+    }
+
+    double averageWaitTimeSec =
+        waitCompletedCount > 0 ? totalWaitTimeSec / waitCompletedCount : 0.0;
+
     SmartDashboard.putNumber("Shooter Target RPM", targetRpm);
     SmartDashboard.putNumber("Shooter Leader RPM", getMeasuredRpm());
     SmartDashboard.putNumber("Shooter Follower RPM", getFollowerMeasuredRpm());
     SmartDashboard.putBoolean("Shooter At Target RPM", isAtTargetRpm());
+    SmartDashboard.putNumber("Shooter Ready Shot Count", readyShotCount);
+    SmartDashboard.putNumber("Shooter Not Ready Shot Count", notReadyShotCount);
+    SmartDashboard.putNumber("Shooter Wait Completed Count", waitCompletedCount);
+    SmartDashboard.putNumber("Shooter Last Wait Time Sec", lastWaitTimeSec);
+    SmartDashboard.putNumber("Shooter Total Wait Time Sec", totalWaitTimeSec);
+    SmartDashboard.putNumber("Shooter Average Wait Time Sec", averageWaitTimeSec);
   }
 }
