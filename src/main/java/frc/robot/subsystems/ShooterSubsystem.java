@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -14,6 +16,8 @@ public class ShooterSubsystem extends SubsystemBase {
       new SparkMax(Constants.Shooter.kLeaderId, MotorType.kBrushless);
   private final SparkMax follower =
       new SparkMax(Constants.Shooter.kFollowerId, MotorType.kBrushless);
+  private final RelativeEncoder leaderEncoder = leader.getEncoder();
+  private final RelativeEncoder followerEncoder = follower.getEncoder();
 
   public ShooterSubsystem() {
     follower.follow(leader, Constants.Shooter.kFollowerInverted);
@@ -25,5 +29,19 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void stop() {
     leader.stopMotor();
+  }
+
+  public double getLeaderRpm() {
+    return leaderEncoder.getVelocity();
+  }
+
+  public double getFollowerRpm() {
+    return followerEncoder.getVelocity();
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Shooter Leader RPM", getLeaderRpm());
+    SmartDashboard.putNumber("Shooter Follower RPM", getFollowerRpm());
   }
 }
