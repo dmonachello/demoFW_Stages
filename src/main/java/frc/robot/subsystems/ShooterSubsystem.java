@@ -36,6 +36,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double lastWaitTimeSec = 0.0;
   private double totalWaitTimeSec = 0.0;
   private boolean waitingForReady = false;
+  private boolean autoShootRequested = false;
 
   public ShooterSubsystem() {
     SparkMaxConfig baseConfig = new SparkMaxConfig();
@@ -99,6 +100,17 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
+  public void requestAutoShoot() {
+    autoShootRequested = true;
+    if (!isAtTargetRpm()) {
+      notReadyShotCount++;
+      if (!waitingForReady) {
+        waitingForReady = true;
+        waitStartTimeSec = Timer.getFPGATimestamp();
+      }
+    }
+  }
+
   @Override
   public void periodic() {
     if (waitingForReady && isAtTargetRpm()) {
@@ -106,6 +118,11 @@ public class ShooterSubsystem extends SubsystemBase {
       lastWaitTimeSec = Timer.getFPGATimestamp() - waitStartTimeSec;
       totalWaitTimeSec += lastWaitTimeSec;
       waitCompletedCount++;
+    }
+
+    if (autoShootRequested && isAtTargetRpm()) {
+      autoShootRequested = false;
+      readyShotCount++;
     }
 
     double averageWaitTimeSec =
@@ -121,5 +138,6 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Last Wait Time Sec", lastWaitTimeSec);
     SmartDashboard.putNumber("Shooter Total Wait Time Sec", totalWaitTimeSec);
     SmartDashboard.putNumber("Shooter Average Wait Time Sec", averageWaitTimeSec);
+    SmartDashboard.putBoolean("Shooter Auto Shoot Requested", autoShootRequested);
   }
 }
