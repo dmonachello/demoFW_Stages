@@ -39,6 +39,15 @@ public final class Constants {
     private Shooter() {}
   }
 
+  public static final class Hopper {
+    public static final int kMotorId = 42;
+    public static final boolean kInverted = false;
+    public static final double kFeedPower = 0.5;
+    public static final double kFeedSeconds = 0.3;
+
+    private Hopper() {}
+  }
+
   public static final class Vision {
     public static final String kCameraName = "photonvision";
     public static final double kFakeDistanceMeters = 3.0;

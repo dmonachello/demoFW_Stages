@@ -11,16 +11,22 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.SetShooterRpm;
 import frc.robot.commands.StopShooter;
+import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.util.ShooterRpmMap;
 
 public class RobotContainer {
   private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final HopperSubsystem hopper = new HopperSubsystem();
   private final CommandXboxController operator =
       new CommandXboxController(Constants.OI.kOperatorPort);
   private final GenericHID trellis = new GenericHID(Constants.OI.kTrellisPort);
+  private final Command feedHopperOnce =
+      Commands.startEnd(hopper::feed, hopper::stop, hopper)
+          .withTimeout(Constants.Hopper.kFeedSeconds);
 
   public RobotContainer() {
+    shooter.setOnShoot(this::scheduleFeed);
     configureBindings();
   }
 
@@ -53,6 +59,12 @@ public class RobotContainer {
                         ShooterRpmMap.rpmFromDistanceTable(getVisionDistanceMeters())),
                 shooter));
     new JoystickButton(trellis, 24).onTrue(new StopShooter(shooter));
+  }
+
+  private void scheduleFeed() {
+    if (!feedHopperOnce.isScheduled()) {
+      feedHopperOnce.schedule();
+    }
   }
 
   private double getVisionDistanceMeters() {

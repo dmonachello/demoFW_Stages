@@ -37,6 +37,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double totalWaitTimeSec = 0.0;
   private boolean waitingForReady = false;
   private boolean autoShootRequested = false;
+  private Runnable onShoot = () -> {};
 
   public ShooterSubsystem() {
     SparkMaxConfig baseConfig = new SparkMaxConfig();
@@ -59,6 +60,10 @@ public class ShooterSubsystem extends SubsystemBase {
     SparkMaxConfig followerConfig = new SparkMaxConfig();
     followerConfig.apply(baseConfig).follow(leader, Constants.Shooter.kFollowerInverted);
     follower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
+
+  public void setOnShoot(Runnable onShoot) {
+    this.onShoot = onShoot != null ? onShoot : () -> {};
   }
 
   public void setTargetRpm(double rpm) {
@@ -90,6 +95,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void shootTheBall() {
     if (isAtTargetRpm()) {
       readyShotCount++;
+      onShoot.run();
       return;
     }
 
@@ -123,6 +129,7 @@ public class ShooterSubsystem extends SubsystemBase {
     if (autoShootRequested && isAtTargetRpm()) {
       autoShootRequested = false;
       readyShotCount++;
+      onShoot.run();
     }
 
     double averageWaitTimeSec =
