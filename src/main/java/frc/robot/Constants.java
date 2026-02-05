@@ -38,4 +38,11 @@ public final class Constants {
 
     private Shooter() {}
   }
+
+  public static final class Vision {
+    public static final String kCameraName = "photonvision";
+    public static final double kFakeDistanceMeters = 3.0;
+
+    private Vision() {}
+  }
 }
