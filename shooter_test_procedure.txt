@@ -1,0 +1,71 @@
+Shooter System Test Procedure (Leader/Follower)
+
+Before You Start
+- Put the robot on blocks or remove wheels if the shooter could interact with the field.
+- No balls loaded for the first half of the tests.
+- Confirm CAN IDs match Constants.Shooter.kLeaderId and kFollowerId.
+- Confirm breaker sizes and wiring are correct.
+
+1) Power-On & CAN Sanity
+- Power the robot.
+- Open Driver Station + SmartDashboard.
+- Confirm RPM values change when you spin the flywheel by hand.
+Pass criteria: Leader/follower RPM values update.
+
+2) Direction Check (Very Low RPM)
+- Press A (low RPM).
+- Observe motor direction.
+- Stop with X if needed.
+Pass criteria: Flywheel spins in expected direction; both motors spin the same direction.
+If motors fight: Toggle Constants.Shooter.kFollowerInverted.
+
+3) Follower Verification
+- Press A (low RPM).
+- Compare leader RPM vs follower RPM on dashboard.
+Pass criteria: Follower RPM closely tracks leader RPM.
+
+4) PID / Setpoint Tracking (No Ball)
+- Press A (low), Y (mid), B (high).
+- Observe time-to-speed, overshoot, and stability.
+Pass criteria: Reaches target quickly and settles within allowed error without oscillation.
+
+5) At-Speed Indicator
+- Use A/Y/B and watch Shooter At Target RPM.
+Pass criteria: At Target becomes true when steady.
+
+6) Manual Shoot Placeholder
+- With shooter at speed, press Right Bumper.
+- Check Shooter Ready Shot Count increments.
+Pass criteria: Count increments only when At Target is true.
+
+7) Auto-Shoot Placeholder
+- Press B (high).
+- Immediately press Left Bumper (auto-shoot).
+- Watch Shooter Auto Shoot Requested; it should clear once ready.
+- Confirm Shooter Ready Shot Count increments automatically.
+Pass criteria: Auto-shoot fires as soon as speed is reached.
+
+8) Wait-Time Metrics
+- Press Left Bumper before the shooter is ready.
+- Wait for it to reach speed.
+- Check Shooter Wait Completed Count, Last/Total/Average Wait Time Sec.
+Pass criteria: Timing values update as expected.
+
+9) D-Pad Up (Fake Vision RPM)
+- Hold D-pad up.
+- Shooter should go to RPM computed from fake distance.
+- Release D-pad up; setpoint stops updating (last value remains until changed).
+Pass criteria: RPM setpoint changes while holding D-pad up.
+
+10) Optional: With Ball
+- Load 1 ball only.
+- Spin to target RPM.
+- Press Right Bumper to simulate shoot.
+- Observe RPM dip and recovery.
+Pass criteria: RPM recovers quickly and consistently.
+
+What to Record
+- Time to reach setpoint (low/mid/high)
+- Overshoot and oscillation
+- At-speed stability
+- Follower mismatch, if any

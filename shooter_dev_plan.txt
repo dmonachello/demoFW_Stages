@@ -1,0 +1,46 @@
+Shooter Development Plan (Staged, Testable)
+
+Stage 1: Open-Loop Flywheel (Simplest Start)
+- Implement a ShooterSubsystem that uses SparkMax.set(...) or setVoltage(...) only.
+- No encoders, no PID, no closed-loop config yet.
+- Bind buttons for Low/Mid/High power and Stop.
+- Test: verify direction, both motors spin together, and power levels feel correct.
+
+Stage 2: Basic Telemetry
+- Add encoder readings (RPM) to dashboard.
+- Keep open-loop control.
+- Test: verify RPM updates match speed changes.
+
+Stage 3: Closed-Loop Velocity Control
+- Add closed-loop configuration (PID + feedforward).
+- Replace open-loop buttons with RPM setpoints.
+- Test: reach and hold target RPM, check at-speed boolean.
+
+Stage 4: Manual Shoot Placeholder
+- Add shoot button that increments a counter only when at speed.
+- Add not-ready count and wait-time stats.
+- Test: press shoot when ready vs not ready and verify counters.
+
+Stage 5: Auto-Shoot Latch
+- Add auto-shoot request that fires once the shooter reaches speed.
+- Add dashboard indicator for auto-shoot request.
+- Test: press before ready and verify it fires once ready.
+
+Stage 6: Mapping Class + Fake Vision Input
+- Create ShooterRpmMap with table + interpolation and linear mapping option.
+- Use fake distance input from D-pad up.
+- Test: holding D-pad up drives RPM from fake distance.
+
+Stage 7: PhotonVision Integration
+- Replace fake distance with real PhotonVision distance.
+- Test: verify distance updates and RPM changes.
+
+Stage 8: Indexer/Feeder Integration
+- Add indexer subsystem and replace placeholders with real feed command.
+- Keep interlock to only feed when at speed.
+- Test: verify feed only happens when at speed.
+
+Stage 9: Calibration & Tuning
+- Gather distance-to-RPM data for table.
+- Tune PID/FF and allowed error.
+- Test: accuracy and recovery at all distances.
