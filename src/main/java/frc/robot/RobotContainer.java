@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.SetShooterRpm;
 import frc.robot.commands.StopShooter;
@@ -63,7 +64,7 @@ public class RobotContainer {
 
   private void scheduleFeed() {
     if (!feedHopperOnce.isScheduled()) {
-      feedHopperOnce.schedule();
+      CommandScheduler.getInstance().schedule(feedHopperOnce);
     }
   }
 
