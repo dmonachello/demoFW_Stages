@@ -7,8 +7,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class SetShooterRpm extends InstantCommand {
-  public SetShooterRpm(ShooterSubsystem shooter, double rpm) {
-    super(() -> shooter.setTargetRpm(rpm), shooter);
+public class SetShooterPower extends InstantCommand {
+  public SetShooterPower(ShooterSubsystem shooter, double power) {
+    super(() -> shooter.setPower(power), shooter);
   }
 }

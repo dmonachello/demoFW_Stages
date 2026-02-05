@@ -19,33 +19,11 @@ public final class Constants {
     public static final int kFollowerId = 40;
     public static final boolean kFollowerInverted = true;
 
-    // RPM setpoints for the demo.
-    public static final double kLowRpm = 2000.0;
-    public static final double kMidRpm = 3250.0;
-    public static final double kHighRpm = 4500.0;
-    public static final double kMaxRpm = 5700.0;
-
-    // Basic velocity PID + feedforward gains for a NEO on a Spark Max.
-    public static final double kP = 0.00018;
-    public static final double kI = 0.0;
-    public static final double kD = 0.00003;
-    public static final double kFF = 0.961 / kMaxRpm;
-    public static final double kIZone = 0.0;
-    public static final double kAllowedClosedLoopError = 75.0;
-    public static final int kSmartCurrentLimit = 40;
-    public static final double kOpenLoopRampRate = 0.1;
-    public static final double kClosedLoopRampRate = 0.0;
-    // Single-motor starting points (reference only; not used by code):
-    // kFF ~ 1.00 / kMaxRpm, kP ~ 0.00020, kD ~ 0.00003
+    // Open-loop power levels for early testing.
+    public static final double kLowPower = 0.25;
+    public static final double kMidPower = 0.45;
+    public static final double kHighPower = 0.65;
 
     private Shooter() {}
-  }
-
-  public static final class Vision {
-    public static final String kCameraName = "photonvision";
-    // TODO: Replace with a real fake/test distance or remove once PhotonVision is wired.
-    public static final double kFakeDistanceMeters = 3.0;
-
-    private Vision() {}
   }
 }
