@@ -21,6 +21,9 @@ public final class ShooterRpmMap {
     if (!Double.isFinite(distanceMeters)) {
       return 0.0;
     }
+    if (kDistanceMeters.length == 0 || kDistanceMeters.length != kRpm.length) {
+      return 0.0;
+    }
 
     if (distanceMeters <= kDistanceMeters[0]) {
       return kRpm[0];
