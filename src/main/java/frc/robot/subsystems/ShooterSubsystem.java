@@ -38,6 +38,10 @@ public class ShooterSubsystem extends SubsystemBase {
   private boolean waitingForReady = false;
   private boolean autoShootRequested = false;
   private Runnable onShoot = () -> {};
+  private double peakAbsRpmError = 0.0;
+  private double sumAbsRpmError = 0.0;
+  private int rpmErrorSamples = 0;
+  private double lastTargetRpm = 0.0;
 
   public ShooterSubsystem() {
     SparkMaxConfig baseConfig = new SparkMaxConfig();
@@ -119,6 +123,20 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (Math.abs(targetRpm - lastTargetRpm) > 1e-3) {
+      peakAbsRpmError = 0.0;
+      sumAbsRpmError = 0.0;
+      rpmErrorSamples = 0;
+      lastTargetRpm = targetRpm;
+    }
+
+    if (targetRpm > 0.0) {
+      double absError = Math.abs(targetRpm - getMeasuredRpm());
+      peakAbsRpmError = Math.max(peakAbsRpmError, absError);
+      sumAbsRpmError += absError;
+      rpmErrorSamples++;
+    }
+
     if (waitingForReady && isAtTargetRpm()) {
       waitingForReady = false;
       lastWaitTimeSec = Timer.getFPGATimestamp() - waitStartTimeSec;
@@ -134,11 +152,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
     double averageWaitTimeSec =
         waitCompletedCount > 0 ? totalWaitTimeSec / waitCompletedCount : 0.0;
+    double averageAbsRpmError =
+        rpmErrorSamples > 0 ? sumAbsRpmError / rpmErrorSamples : 0.0;
 
     SmartDashboard.putNumber("Shooter Target RPM", targetRpm);
     SmartDashboard.putNumber("Shooter Leader RPM", getMeasuredRpm());
     SmartDashboard.putNumber("Shooter Follower RPM", getFollowerMeasuredRpm());
     SmartDashboard.putBoolean("Shooter At Target RPM", isAtTargetRpm());
+    SmartDashboard.putNumber("Shooter Peak Abs RPM Error", peakAbsRpmError);
+    SmartDashboard.putNumber("Shooter Avg Abs RPM Error", averageAbsRpmError);
     SmartDashboard.putNumber("Shooter Ready Shot Count", readyShotCount);
     SmartDashboard.putNumber("Shooter Not Ready Shot Count", notReadyShotCount);
     SmartDashboard.putNumber("Shooter Wait Completed Count", waitCompletedCount);

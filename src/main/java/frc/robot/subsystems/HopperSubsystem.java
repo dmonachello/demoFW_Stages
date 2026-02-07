@@ -4,8 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -14,7 +17,9 @@ public class HopperSubsystem extends SubsystemBase {
       new SparkMax(Constants.Hopper.kMotorId, MotorType.kBrushless);
 
   public HopperSubsystem() {
-    motor.setInverted(Constants.Hopper.kInverted);
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.inverted(Constants.Hopper.kInverted);
+    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void feed() {
